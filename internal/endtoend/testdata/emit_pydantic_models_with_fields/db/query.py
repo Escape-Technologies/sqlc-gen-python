@@ -26,7 +26,7 @@ class Querier:
             return None
         return models.Author(
             id=row[0],
-            class=row[1],
+            class_=row[1],
         )
 
 
@@ -40,5 +40,5 @@ class AsyncQuerier:
             return None
         return models.Author(
             id=row[0],
-            class=row[1],
+            class_=row[1],
         )

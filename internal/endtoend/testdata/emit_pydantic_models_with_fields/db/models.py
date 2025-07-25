@@ -6,4 +6,6 @@ import pydantic
 
 class Author(pydantic.BaseModel):
     id: int
-    class: str
+    class_: str = pydantic.Field(
+        alias="class",
+    )

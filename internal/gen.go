@@ -107,7 +107,7 @@ func (v QueryValue) RowNode(rowVar string) *pyast.Node {
 	}
 	for i, f := range v.Struct.Fields {
 		call.Keywords = append(call.Keywords, &pyast.Keyword{
-			Arg: f.Name,
+			Arg: poet.FieldName(f.Name),
 			Value: subscriptNode(
 				rowVar,
 				constantInt(i),
@@ -622,51 +622,37 @@ func fieldNode(f Field, emitPydanticModels bool) *pyast.Node {
 		return &pyast.Node{
 			Node: &pyast.Node_Assign{
 				Assign: &pyast.Assign{
-					Targets: []*pyast.Node{
-						{
-							Node: &pyast.Node_AnnAssign{
-								AnnAssign: &pyast.AnnAssign{
-									Target:     &pyast.Name{Id: poet.FieldName(f.Name)},
-									Annotation: f.Type.Annotation(),
-									Comment:    f.Comment,
-								},
-							},
+					Targets: poet.Nodes(
+						&pyast.AnnAssign{
+							Target:     &pyast.Name{Id: poet.FieldName(f.Name)},
+							Annotation: f.Type.Annotation(),
+							Comment:    f.Comment,
 						},
-					},
-					Value: &pyast.Node{
-						Node: &pyast.Node_Call{
-							Call: &pyast.Call{
-								Func: &pyast.Node{
-									Node: &pyast.Node_Attribute{
-										Attribute: &pyast.Attribute{
-											Value: &pyast.Node{
-												Node: &pyast.Node_Name{
-													Name: &pyast.Name{
-														Id: "pydantic",
-													},
-												},
-											},
-											Attr: "Field",
-										},
-									},
-								},
-								Keywords: []*pyast.Keyword{
-									{
-										Arg: "alias",
+					),
+					Value: poet.Node(
+						&pyast.Call{
+							Func: &pyast.Node{
+								Node: &pyast.Node_Attribute{
+									Attribute: &pyast.Attribute{
 										Value: &pyast.Node{
-											Node: &pyast.Node_Constant{
-												Constant: &pyast.Constant{
-													Value: &pyast.Constant_Str{
-														Str: f.Name,
-													},
+											Node: &pyast.Node_Name{
+												Name: &pyast.Name{
+													Id: "pydantic",
 												},
 											},
 										},
+										Attr: "Field",
 									},
 								},
 							},
+							Keywords: []*pyast.Keyword{
+								{
+									Arg:   "alias",
+									Value: poet.Constant(f.Name),
+								},
+							},
 						},
-					},
+					),
 				},
 			},
 		}

@@ -598,6 +598,45 @@ func pydanticNode(name string) *pyast.ClassDef {
 				},
 			},
 		},
+		Body: poet.Nodes(
+			&pyast.Assign{
+				Targets: []*pyast.Node{
+					{
+						Node: &pyast.Node_Name{
+							Name: &pyast.Name{Id: "model_config"},
+						},
+					},
+				},
+				Value: poet.Node(
+					&pyast.Call{
+						Func: &pyast.Node{
+							Node: &pyast.Node_Attribute{
+								Attribute: &pyast.Attribute{
+									Value: &pyast.Node{
+										Node: &pyast.Node_Name{
+											Name: &pyast.Name{
+												Id: "pydantic",
+											},
+										},
+									},
+									Attr: "ConfigDict",
+								},
+							},
+						},
+						Keywords: []*pyast.Keyword{
+							{
+								Arg:   "validate_by_alias",
+								Value: poet.Name("True"),
+							},
+							{
+								Arg:   "validate_by_name",
+								Value: poet.Name("True"),
+							},
+						},
+					},
+				),
+			},
+		),
 	}
 }
 

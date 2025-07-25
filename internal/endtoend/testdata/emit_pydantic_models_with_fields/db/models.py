@@ -5,6 +5,10 @@ import pydantic
 
 
 class Author(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(
+        validate_by_alias=True,
+        validate_by_name=True,
+    )
     id: int
     class_: str = pydantic.Field(
         alias="class",
